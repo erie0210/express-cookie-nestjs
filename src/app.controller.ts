@@ -1,4 +1,4 @@
-import { Controller, Get, Res } from '@nestjs/common';
+import { Controller, Get, Req, Res } from '@nestjs/common';
 import { AppService } from './app.service';
 import jwt from 'jsonwebtoken';
 
@@ -17,10 +17,14 @@ export class AppController {
   }
 
   @Get()
-  getHello(@Res() res) {
+  getHello(@Req() req, @Res() res) {
     const data = { name: 'joie' };
     const token = this.createToken(data);
-    res.cookie('auth_token', token, { httpOnly: true, maxAge: null });
+    res.cookie('auth_token', token, {
+      httpOnly: true,
+      maxAge: null,
+      domain: req.hostname.split('.').slice(-2).join('.'),
+    });
     res.send(this.appService.getHello());
   }
 }
